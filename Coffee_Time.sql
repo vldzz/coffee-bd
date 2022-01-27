@@ -92,7 +92,7 @@ CREATE TABLE Orders(
 INSERT INTO Subsidiaries VALUES
 	(1, 'Centru', 'str.Stefan cel Mare 47'),
 	(2, 'Botanica', 'str.Cuza Voda 128')
--- 	(3, 'Ciocana', 'str.Mircea cel Batran 26')
+  (3, 'Ciocana', 'str.Mircea cel Batran 26')
 
 INSERT INTO Employers (id_employer, name, sallary) VALUES
 	(1, 'Bolsoi Valentina', 4800),
@@ -109,6 +109,7 @@ INSERT INTO Employers_Schedule (Id_Schedule, id_employer, id_subsidiary, date_) 
     (6, 2, 2, '2022-01-29'),
     (7, 4, 2, '2022-01-30'),
     (8, 4, 2, '2022-01-31')
+
 
 INSERT INTO Providers(id_provider, provider_name, adress) VALUES
 	(1, 'JDK', 'str 31 august 99'),
@@ -155,6 +156,7 @@ CREATE VIEW Show_Orders AS
     INNER JOIN Employers_Schedule Schedule ON Payments.Id_Schedule = Schedule.Id_Schedule
     INNER JOIN Employers ON Employers.id_employer = Schedule.Id_Employer
     INNER JOIN Subsidiaries ON Schedule.Id_Subsidiary = Subsidiaries.Id_Subsidiary
+
 
 GO
 -----------------------------------------------------
