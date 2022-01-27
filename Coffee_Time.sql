@@ -18,8 +18,8 @@ GO
 -------------------------------------------
 /* Gives all the rights to current user */
 ------------------------------------------
-ALTER AUTHORIZATION 
-ON DATABASE :: Coffee_Time TO SA   
+ALTER AUTHORIZATION
+ON DATABASE :: Coffee_Time TO SA
 GO
 
 
@@ -36,7 +36,7 @@ GO
 CREATE TABLE Subsidiaries(
 	id_subsidiary INT PRIMARY KEY,
 	subsidiary_name NVARCHAR(50) UNIQUE NOT NULL,
-	adress NVARCHAR(50) 
+	adress NVARCHAR(50)
 )
 
 CREATE TABLE Employers(
@@ -63,9 +63,9 @@ CREATE TABLE Products(
 )
 
 CREATE TABLE Payments(
-	id_payment INT PRIMARY KEY, 
+	id_payment INT PRIMARY KEY,
 	payment_type NVARCHAR(4) CHECK(payment_type='CASH' OR payment_type='CARD') NOT NULL,
-	payment_date DATETIME NOT NULL, 
+	payment_date DATETIME NOT NULL,
 	id_subsiadary INT FOREIGN KEY REFERENCES Subsidiaries(id_subsidiary),
 	id_employer INT FOREIGN KEY REFERENCES Employers(id_employer)
 )
@@ -80,7 +80,7 @@ CREATE TABLE Orders(
 
 ------------------------------------------------------[INSERT SECTION]----------------------------------------------------------
 
-INSERT INTO Subsidiaries VALUES 
+INSERT INTO Subsidiaries VALUES
 	(1, 'Centru', 'str.Stefan cel Mare 47'),
 	(2, 'Botanica', 'str.Cuza Voda 128'),
 	(3, 'Ciocana', 'str.Mircea cel Batran 26')
@@ -91,13 +91,13 @@ INSERT INTO Employers VALUES
 	(3, 'Frunza', 'Sanda', 5000, 2)
 
 
-INSERT INTO Providers(id_provider, provider_name, adress) VALUES 
+INSERT INTO Providers(id_provider, provider_name, adress) VALUES
 	(1, 'JDK', 'str 31 august 99'),
 	(2, 'CoffeSomeName', 'str. Dacia 43'),
 	(3, 'SiropMd', 'str. Stefan cel mare 65'),
 	(4, 'Linella', 'str. Titulescu 3')
 
-INSERT INTO Products(id_product, product_name, price, id_provider) VALUES 
+INSERT INTO Products(id_product, product_name, price, id_provider) VALUES
 	(1, 'americano', 17, 2),
 	(2, 'cappucino', 22, 1),
 	(3, 'mochaccino', 25, 3),
@@ -126,14 +126,16 @@ GO
 /* A view that shows all the orders done */
 -------------------------------------------
 CREATE VIEW Show_Orders AS
-SELECT Orders.id_order, Products.product_name, 
-	Products.price, Orders.quantity, (Products.price*Orders.quantity) as 'total_price', 
-	Payments.payment_type, Payments.payment_date, 
-	(Employers.first_name + ' ' + Employers.last_name) as cashier, Payments.id_payment
-FROM orders 
+SELECT Orders.id_order, Products.product_name,
+	Products.price, Orders.quantity, (Products.price*Orders.quantity) as 'total_price',
+	Payments.payment_type, Payments.payment_date,
+	(Employers.first_name + ' ' + Employers.last_name) as cashier, Payments.id_payment,
+       Subsidiaries.Adress
+FROM orders
 INNER JOIN Payments ON Orders.id_payment = Payments.id_payment
 INNER JOIN Products ON Orders.id_product = Products.id_product
 INNER JOIN Employers ON Employers.id_employer = Payments.id_employer
+INNER JOIN Subsidiaries ON Subsidiaries.Id_Subsidiary = Employers.Id_Subsidiary
 GO
 
 
@@ -146,10 +148,11 @@ WHERE MONTH(payment_date) = MONTH(GETDATE())
 GO
 
 
-
-
-
-
+CREATE VIEW Payment_Statistics AS
+SELECT Id_Payment, SUM(total_price) AS 'Paid',
+       FORMAT(Payment_Date, 'dd-MM-yyyy') AS 'payment_date',
+       Adress, Cashier FROM Show_Orders
+GROUP BY Id_Payment, Payment_Date, Adress, Cashier
 
 
 -- Vizualiare cat si de cati bani a cumparat
