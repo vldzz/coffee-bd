@@ -41,8 +41,7 @@ CREATE TABLE Subsidiaries(
 
 CREATE TABLE Employers(
 	id_employer INT PRIMARY KEY,
-	first_name NVARCHAR(25) NOT NULL,
-	last_name NVARCHAR(25) NOT NULL,
+	name NVARCHAR(50) NOT NULL,
 	sallary FLOAT NOT NULL,
 	id_subsidiary INT FOREIGN KEY REFERENCES Subsidiaries(id_subsidiary),
 	CHECK (sallary >= 0)
@@ -85,10 +84,10 @@ INSERT INTO Subsidiaries VALUES
 	(2, 'Botanica', 'str.Cuza Voda 128'),
 	(3, 'Ciocana', 'str.Mircea cel Batran 26')
 
-INSERT INTO Employers VALUES
-	(1, 'Bolsoi', 'Valentina', 4800, 1),
-	(2, 'Covrig', 'Petru', 5200, 3),
-	(3, 'Frunza', 'Sanda', 5000, 2)
+INSERT INTO Employers (id_employer, name, sallary, id_subsidiary) VALUES
+	(1, 'Bolsoi Valentina', 4800, 1),
+	(2, 'Covrig Petru', 5200, 3),
+	(3, 'Frunza Sanda', 5000, 2)
 
 
 INSERT INTO Providers(id_provider, provider_name, adress) VALUES
@@ -129,7 +128,7 @@ CREATE VIEW Show_Orders AS
 SELECT Orders.id_order, Products.product_name,
 	Products.price, Orders.quantity, (Products.price*Orders.quantity) as 'total_price',
 	Payments.payment_type, Payments.payment_date,
-	(Employers.first_name + ' ' + Employers.last_name) as cashier, Payments.id_payment,
+	Employers.Name as cashier, Payments.id_payment,
        Subsidiaries.Adress
 FROM orders
 INNER JOIN Payments ON Orders.id_payment = Payments.id_payment
