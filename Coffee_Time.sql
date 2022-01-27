@@ -23,9 +23,9 @@ ON DATABASE :: Coffee_Time TO SA
 GO
 
 
---------------------------------------------
-/* Doesn't  count inserted rows in tables */
---------------------------------------------
+-------------------------------------------
+/* Doesn't count inserted rows in tables */
+-------------------------------------------
 SET NOCOUNT ON;
 GO
 
@@ -137,9 +137,9 @@ INNER JOIN Employers ON Employers.id_employer = Payments.id_employer
 GO
 
 
---------------------------------------------------------
-/* View for getting all the orders from current month */
---------------------------------------------------------
+-----------------------------------------------------
+/* A view that shows all orders from current month */
+-----------------------------------------------------
 CREATE VIEW Orders_Current_Month AS
 SELECT * FROM Show_Orders
 WHERE MONTH(payment_date) = MONTH(GETDATE())
