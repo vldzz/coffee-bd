@@ -41,19 +41,18 @@ CREATE TABLE Subsidiaries(
 
 CREATE TABLE Employers(
 	id_employer INT PRIMARY KEY,
-	name NVARCHAR(50) NOT NULL,
+	employer_name NVARCHAR(50) NOT NULL,
 	sallary FLOAT NOT NULL,
--- 	id_subsidiary INT FOREIGN KEY REFERENCES Subsidiaries(id_subsidiary),
 	CHECK (sallary >= 0)
 )
 
 CREATE TABLE Employers_Schedule (
     id_Schedule INT PRIMARY KEY ,
-    Id_Employer INT FOREIGN KEY REFERENCES Employers(Id_Employer),
-    Id_Subsidiary INT FOREIGN KEY REFERENCES Subsidiaries(Id_Subsidiary),
+    id_Employer INT FOREIGN KEY REFERENCES Employers(id_Employer),
+    id_Subsidiary INT FOREIGN KEY REFERENCES Subsidiaries(id_Subsidiary),
     Date_ DATE,
 
-    UNIQUE (Id_Employer, Id_Subsidiary, Date_)
+    UNIQUE (id_Employer, id_Subsidiary, Date_)
 )
 
 CREATE TABLE Providers(
@@ -73,10 +72,7 @@ CREATE TABLE Products(
 CREATE TABLE Payments(
 	id_payment INT PRIMARY KEY,
 	payment_type NVARCHAR(4) CHECK(payment_type='CASH' OR payment_type='CARD') NOT NULL,
--- 	payment_date DATETIME NOT NULL,
--- 	id_subsiadary INT FOREIGN KEY REFERENCES Subsidiaries(id_subsidiary)
--- 	id_employer INT FOREIGN KEY REFERENCES Employers(id_employer)
-    id_schedule INT FOREIGN KEY REFERENCES Employers_Schedule(Id_Schedule)
+    id_schedule INT FOREIGN KEY REFERENCES Employers_Schedule(id_Schedule)
 )
 
 CREATE TABLE Orders(
@@ -91,16 +87,16 @@ CREATE TABLE Orders(
 
 INSERT INTO Subsidiaries VALUES
 	(1, 'Centru', 'str.Stefan cel Mare 47'),
-	(2, 'Botanica', 'str.Cuza Voda 128')
-  (3, 'Ciocana', 'str.Mircea cel Batran 26')
+	(2, 'Botanica', 'str.Cuza Voda 128'),
+    (3, 'Ciocana', 'str.Mircea cel Batran 26')
 
-INSERT INTO Employers (id_employer, name, sallary) VALUES
+INSERT INTO Employers (id_employer, employer_name, sallary) VALUES
 	(1, 'Bolsoi Valentina', 4800),
 	(2, 'Covrig Petru', 5200),
 	(3, 'Frunza Sanda', 5000),
 	(4, 'Zgardan Razvan', 8000)
 
-INSERT INTO Employers_Schedule (Id_Schedule, id_employer, id_subsidiary, date_) VALUES
+INSERT INTO Employers_Schedule (id_Schedule, id_employer, id_subsidiary, date_) VALUES
     (1, 1, 1, '2022-01-28'),
     (2, 1, 1, '2022-01-29'),
     (3, 3, 1, '2022-01-30'),
@@ -109,7 +105,6 @@ INSERT INTO Employers_Schedule (Id_Schedule, id_employer, id_subsidiary, date_) 
     (6, 2, 2, '2022-01-29'),
     (7, 4, 2, '2022-01-30'),
     (8, 4, 2, '2022-01-31')
-
 
 INSERT INTO Providers(id_provider, provider_name, adress) VALUES
 	(1, 'JDK', 'str 31 august 99'),
@@ -124,11 +119,10 @@ INSERT INTO Products(id_product, product_name, price, id_provider) VALUES
 	(4, 'croasant', 15, 2),
 	(5, 'ceai negru', 20, 2)
 
-INSERT INTO Payments(id_payment, payment_type, Id_Schedule) VALUES
+INSERT INTO Payments(id_payment, payment_type, id_Schedule) VALUES
 	(1, 'CARD', 1),
 	(2, 'CASH', 2),
 	(3, 'CARD', 2)
-
 
 INSERT INTO Orders(id_order, id_product, quantity, id_payment) VALUES
 	(1, 1, 1, 1),
@@ -149,13 +143,13 @@ CREATE VIEW Show_Orders AS
     SELECT Orders.id_order, Products.product_name,
         Products.price, Orders.quantity, (Products.price*Orders.quantity) as 'total_price',
         Payments.payment_type, Schedule.Date_,
-        Employers.Name as cashier, Subsidiaries.Adress, Payments.id_payment
+        Employers.employer_name as cashier, Subsidiaries.Adress, Payments.id_payment
     FROM orders
     INNER JOIN Payments ON Orders.id_payment = Payments.id_payment
     INNER JOIN Products ON Orders.id_product = Products.id_product
-    INNER JOIN Employers_Schedule Schedule ON Payments.Id_Schedule = Schedule.Id_Schedule
-    INNER JOIN Employers ON Employers.id_employer = Schedule.Id_Employer
-    INNER JOIN Subsidiaries ON Schedule.Id_Subsidiary = Subsidiaries.Id_Subsidiary
+    INNER JOIN Employers_Schedule Schedule ON Payments.id_Schedule = Schedule.id_Schedule
+    INNER JOIN Employers ON Employers.id_employer = Schedule.id_Employer
+    INNER JOIN Subsidiaries ON Schedule.id_Subsidiary = Subsidiaries.id_Subsidiary
 
 
 GO
@@ -170,10 +164,10 @@ GO
 /* A view that shows all employer's schedule, and additional info */
 --------------------------------------------------------------------
 CREATE VIEW Schedule AS
-    SELECT id_schedule, E.Name, S.Adress, date_
+    SELECT id_schedule, E.employer_name, S.Adress, date_
     FROM Employers_Schedule
-    INNER JOIN Employers E ON E.Id_Employer = Employers_Schedule.Id_Employer
-    INNER JOIN Subsidiaries S ON Employers_Schedule.Id_Subsidiary = S.Id_Subsidiary
+    INNER JOIN Employers E ON E.id_Employer = Employers_Schedule.id_Employer
+    INNER JOIN Subsidiaries S ON Employers_Schedule.id_Subsidiary = S.id_Subsidiary
 GO
 
 
@@ -181,17 +175,17 @@ GO
 /* A view that shows all payments */
 ------------------------------------
 CREATE VIEW Payment_Statistics AS
-    SELECT Id_Payment, SUM(total_price) AS 'Paid',
+    SELECT id_Payment, SUM(total_price) AS 'Paid',
            FORMAT(Date_, 'dd-MM-yyyy') AS 'payment_date',
            Adress, Cashier FROM Show_Orders
-    GROUP BY Id_Payment, Date_, Adress, Cashier
+    GROUP BY id_Payment, Date_, Adress, Cashier
 GO
 
 ----------------------------------------------
 /* A view that shows all payments for today */
 ----------------------------------------------
 CREATE VIEW Payments_For_Today AS
-    SELECT Id_Payment, Paid, Payment_Date, Adress, Cashier
+    SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
     FROM Payment_Statistics
     WHERE DAY(payment_date) = DAY(GETDATE())
 GO
@@ -200,7 +194,7 @@ GO
 /* A view that shows all payments for current month */
 ------------------------------------------------------
 CREATE VIEW Payments_Current_Month AS
-    SELECT Id_Payment, Paid, Payment_Date, Adress, Cashier
+    SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
     FROM Payment_Statistics
     WHERE MONTH(payment_date) = MONTH(GETDATE())
 GO
