@@ -1,4 +1,3 @@
-SET DATEFORMAT dmy
 USE master
 GO
 IF exists(
@@ -51,7 +50,6 @@ CREATE TABLE Employers_Schedule (
     id_Employer INT FOREIGN KEY REFERENCES Employers(id_Employer),
     id_Subsidiary INT FOREIGN KEY REFERENCES Subsidiaries(id_Subsidiary),
     Date_ DATE,
-
     UNIQUE (id_Employer, id_Subsidiary, Date_)
 )
 
@@ -82,8 +80,11 @@ CREATE TABLE Orders(
 	id_payment INT FOREIGN KEY REFERENCES payments(id_payment),
 	CHECK (quantity > 0)
 )
+GO
+
 
 ------------------------------------------------------[INSERT SECTION]----------------------------------------------------------
+
 
 INSERT INTO Subsidiaries VALUES
 	(1, 'Centru', 'str.Stefan cel Mare 47'),
@@ -150,9 +151,9 @@ CREATE VIEW Show_Orders AS
     INNER JOIN Employers_Schedule Schedule ON Payments.id_Schedule = Schedule.id_Schedule
     INNER JOIN Employers ON Employers.id_employer = Schedule.id_Employer
     INNER JOIN Subsidiaries ON Schedule.id_Subsidiary = Subsidiaries.id_Subsidiary
-
-
 GO
+
+
 -----------------------------------------------------
 /* A view that shows all orders from current month */
 -----------------------------------------------------
@@ -160,6 +161,8 @@ CREATE VIEW Orders_Current_Month AS
     SELECT * FROM Show_Orders
     WHERE MONTH(Date_) = MONTH(GETDATE())
 GO
+
+
 --------------------------------------------------------------------
 /* A view that shows all employer's schedule, and additional info */
 --------------------------------------------------------------------
@@ -181,6 +184,7 @@ CREATE VIEW Payment_Statistics AS
     GROUP BY id_Payment, Date_, Adress, Cashier
 GO
 
+
 ----------------------------------------------
 /* A view that shows all payments for today */
 ----------------------------------------------
@@ -189,6 +193,7 @@ CREATE VIEW Payments_For_Today AS
     FROM Payment_Statistics
     WHERE DAY(payment_date) = DAY(GETDATE())
 GO
+
 
 ------------------------------------------------------
 /* A view that shows all payments for current month */
@@ -199,6 +204,7 @@ CREATE VIEW Payments_Current_Month AS
     WHERE MONTH(payment_date) = MONTH(GETDATE())
 GO
 
+
 -- Tabel pentru adaousuri
 --		americano + lapte + sirop vanilie
 
@@ -207,4 +213,4 @@ GO
 -- Tabel payments, check !
 
 
-SELECT * FROM Payments_Current_Month
+SELECT * FROM Employers_Schedule
