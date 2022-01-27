@@ -41,8 +41,7 @@ CREATE TABLE Subsidiaries(
 
 CREATE TABLE Employers(
 	id_employer INT PRIMARY KEY,
-	first_name NVARCHAR(25) NOT NULL,
-	last_name NVARCHAR(25) NOT NULL,
+	name NVARCHAR(50) NOT NULL,
 	sallary FLOAT NOT NULL,
 -- 	id_subsidiary INT FOREIGN KEY REFERENCES Subsidiaries(id_subsidiary),
 	CHECK (sallary >= 0)
@@ -95,11 +94,11 @@ INSERT INTO Subsidiaries VALUES
 	(2, 'Botanica', 'str.Cuza Voda 128')
 -- 	(3, 'Ciocana', 'str.Mircea cel Batran 26')
 
-INSERT INTO Employers (id_employer, first_name, last_name, sallary) VALUES
-	(1, 'Bolsoi', 'Valentina', 4800),
-	(2, 'Covrig', 'Petru', 5200),
-	(3, 'Frunza', 'Sanda', 5000),
-	(4, 'Zgardan', 'Razvan', 8000)
+INSERT INTO Employers (id_employer, name, sallary) VALUES
+	(1, 'Bolsoi Valentina', 4800),
+	(2, 'Covrig Petru', 5200),
+	(3, 'Frunza Sanda', 5000),
+	(4, 'Zgardan Razvan', 8000)
 
 INSERT INTO Employers_Schedule (Id_Schedule, id_employer, id_subsidiary, date_) VALUES
     (1, 1, 1, '2022-01-28'),
@@ -149,7 +148,7 @@ CREATE VIEW Show_Orders AS
     SELECT Orders.id_order, Products.product_name,
         Products.price, Orders.quantity, (Products.price*Orders.quantity) as 'total_price',
         Payments.payment_type, Schedule.Date_,
-        (Employers.first_name + ' ' + Employers.last_name) as cashier, Subsidiaries.Adress, Payments.id_payment
+        Employers.Name as cashier, Subsidiaries.Adress, Payments.id_payment
     FROM orders
     INNER JOIN Payments ON Orders.id_payment = Payments.id_payment
     INNER JOIN Products ON Orders.id_product = Products.id_product
@@ -158,7 +157,6 @@ CREATE VIEW Show_Orders AS
     INNER JOIN Subsidiaries ON Schedule.Id_Subsidiary = Subsidiaries.Id_Subsidiary
 
 GO
-
 -----------------------------------------------------
 /* A view that shows all orders from current month */
 -----------------------------------------------------
@@ -166,12 +164,11 @@ CREATE VIEW Orders_Current_Month AS
     SELECT * FROM Show_Orders
     WHERE MONTH(Date_) = MONTH(GETDATE())
 GO
-
 --------------------------------------------------------------------
 /* A view that shows all employer's schedule, and additional info */
 --------------------------------------------------------------------
 CREATE VIEW Schedule AS
-    SELECT id_schedule, E.First_Name, S.Adress, date_
+    SELECT id_schedule, E.Name, S.Adress, date_
     FROM Employers_Schedule
     INNER JOIN Employers E ON E.Id_Employer = Employers_Schedule.Id_Employer
     INNER JOIN Subsidiaries S ON Employers_Schedule.Id_Subsidiary = S.Id_Subsidiary
@@ -212,3 +209,6 @@ GO
 
 -- Celiku momentan poate lucra in 2 spoturi in aceiasi zi
 -- Tabel payments, check !
+
+
+SELECT * FROM Payments_Current_Month
