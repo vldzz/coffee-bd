@@ -22,6 +22,12 @@ ON DATABASE :: Coffee_Time TO SA
 GO
 
 
+---------------------------------------
+/* Set data format to day/month/year */
+---------------------------------------
+SET DATEFORMAT DMY
+
+
 -------------------------------------------
 /* Doesn't count inserted rows in tables */
 -------------------------------------------
@@ -57,7 +63,7 @@ CREATE TABLE Employers_Schedule (
 
 CREATE TABLE Providers(
 	id_provider INT PRIMARY KEY,
-	provider_name NVARCHAR(25) NOT NULL,
+	provider_name NVARCHAR(50) NOT NULL,
 	adress NVARCHAR(25)
 )
 
@@ -101,14 +107,14 @@ INSERT INTO Employers (id_employer, employer_name, sallary) VALUES
 
 INSERT INTO Employers_Schedule (id_schedule, id_employer, id_subsidiary, 
 									work_date, start_work_hour, end_work_hour) VALUES
-    (1, 1, 1, '2022-01-28', 10, 18),
-    (2, 1, 1, '2022-01-29', 8, 16),
-    (3, 3, 1, '2022-01-30', 12, 20),
-    (4, 3, 1, '2022-01-21', 14, 22),
-    (5, 2, 2, '2022-01-28', 12, 20),
-    (6, 2, 2, '2022-01-29', 10, 18),
-    (7, 4, 2, '2022-01-30', 8, 16),
-    (8, 4, 2, '2022-01-31', 10, 18)
+    (1, 3, 1, '27/01/2022', 14, 22),
+    (2, 1, 1, '28/01/2022', 10, 18),
+    (3, 2, 2, '28/01/2022', 12, 20),
+    (4, 1, 1, '29/01/2022', 8, 16),
+    (5, 2, 2, '29/01/2022', 10, 18),
+    (6, 3, 1, '30/01/2022', 12, 20),
+    (7, 4, 2, '30/01/2022', 8, 16),
+    (8, 4, 2, '31/01/2022', 10, 18)
 
 INSERT INTO Providers(id_provider, provider_name, adress) VALUES
 	(1, 'JDK', 'str 31 august 99'),
@@ -170,7 +176,7 @@ GO
 /* A view that shows all employer's schedule, and additional info */
 --------------------------------------------------------------------
 CREATE VIEW Schedule AS
-    SELECT id_schedule, E.employer_name, S.adress, work_date
+    SELECT id_schedule, E.employer_name, S.adress, work_date, start_work_hour, end_work_hour
     FROM Employers_Schedule
     INNER JOIN Employers E ON E.id_Employer = Employers_Schedule.id_Employer
     INNER JOIN Subsidiaries S ON Employers_Schedule.id_Subsidiary = S.id_Subsidiary
@@ -209,5 +215,4 @@ GO
 
 
 
-SELECT * FROM Employers_Schedule
-ORDER BY work_date 
+SELECT * FROM Schedule
