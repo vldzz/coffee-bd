@@ -46,11 +46,13 @@ CREATE TABLE Employers(
 )
 
 CREATE TABLE Employers_Schedule (
-    id_Schedule INT PRIMARY KEY ,
-    id_Employer INT FOREIGN KEY REFERENCES Employers(id_Employer),
-    id_Subsidiary INT FOREIGN KEY REFERENCES Subsidiaries(id_Subsidiary),
-    Date_ DATE,
-    UNIQUE (id_Employer, id_Subsidiary, Date_)
+    id_schedule INT PRIMARY KEY ,
+    id_employer INT FOREIGN KEY REFERENCES Employers(id_Employer),
+    id_subsidiary INT FOREIGN KEY REFERENCES Subsidiaries(id_Subsidiary),
+    work_date DATE,
+	start_work_hour DECIMAL(4,2),
+	end_work_hour DECIMAL(4,2)
+    UNIQUE (id_employer, id_subsidiary, work_date) 
 )
 
 CREATE TABLE Providers(
@@ -97,15 +99,16 @@ INSERT INTO Employers (id_employer, employer_name, sallary) VALUES
 	(3, 'Frunza Sanda', 5000),
 	(4, 'Zgardan Razvan', 8000)
 
-INSERT INTO Employers_Schedule (id_Schedule, id_employer, id_subsidiary, date_) VALUES
-    (1, 1, 1, '2022-01-28'),
-    (2, 1, 1, '2022-01-29'),
-    (3, 3, 1, '2022-01-30'),
-    (4, 3, 1, '2022-01-21'),
-    (5, 2, 2, '2022-01-28'),
-    (6, 2, 2, '2022-01-29'),
-    (7, 4, 2, '2022-01-30'),
-    (8, 4, 2, '2022-01-31')
+INSERT INTO Employers_Schedule (id_schedule, id_employer, id_subsidiary, 
+									work_date, start_work_hour, end_work_hour) VALUES
+    (1, 1, 1, '2022-01-28', 10, 18),
+    (2, 1, 1, '2022-01-29', 8, 16),
+    (3, 3, 1, '2022-01-30', 12, 20),
+    (4, 3, 1, '2022-01-21', 14, 22),
+    (5, 2, 2, '2022-01-28', 12, 20),
+    (6, 2, 2, '2022-01-29', 10, 18),
+    (7, 4, 2, '2022-01-30', 8, 16),
+    (8, 4, 2, '2022-01-31', 10, 18)
 
 INSERT INTO Providers(id_provider, provider_name, adress) VALUES
 	(1, 'JDK', 'str 31 august 99'),
@@ -120,7 +123,7 @@ INSERT INTO Products(id_product, product_name, price, id_provider) VALUES
 	(4, 'croasant', 15, 2),
 	(5, 'ceai negru', 20, 2)
 
-INSERT INTO Payments(id_payment, payment_type, id_Schedule) VALUES
+INSERT INTO Payments(id_payment, payment_type, id_schedule) VALUES
 	(1, 'CARD', 1),
 	(2, 'CASH', 2),
 	(3, 'CARD', 2)
@@ -143,7 +146,7 @@ GO
 CREATE VIEW Show_Orders AS
     SELECT Orders.id_order, Products.product_name,
         Products.price, Orders.quantity, (Products.price*Orders.quantity) as 'total_price',
-        Payments.payment_type, Schedule.Date_,
+        Payments.payment_type, Schedule.work_date,
         Employers.employer_name as cashier, Subsidiaries.Adress, Payments.id_payment
     FROM orders
     INNER JOIN Payments ON Orders.id_payment = Payments.id_payment
@@ -159,7 +162,7 @@ GO
 -----------------------------------------------------
 CREATE VIEW Orders_Current_Month AS
     SELECT * FROM Show_Orders
-    WHERE MONTH(Date_) = MONTH(GETDATE())
+    WHERE MONTH(work_date) = MONTH(GETDATE())
 GO
 
 
@@ -167,7 +170,7 @@ GO
 /* A view that shows all employer's schedule, and additional info */
 --------------------------------------------------------------------
 CREATE VIEW Schedule AS
-    SELECT id_schedule, E.employer_name, S.Adress, date_
+    SELECT id_schedule, E.employer_name, S.adress, work_date
     FROM Employers_Schedule
     INNER JOIN Employers E ON E.id_Employer = Employers_Schedule.id_Employer
     INNER JOIN Subsidiaries S ON Employers_Schedule.id_Subsidiary = S.id_Subsidiary
@@ -179,9 +182,9 @@ GO
 ------------------------------------
 CREATE VIEW Payment_Statistics AS
     SELECT id_Payment, SUM(total_price) AS 'Paid',
-           FORMAT(Date_, 'dd-MM-yyyy') AS 'payment_date',
+           FORMAT(work_date, 'dd-MM-yyyy') AS 'payment_date',
            Adress, Cashier FROM Show_Orders
-    GROUP BY id_Payment, Date_, Adress, Cashier
+    GROUP BY id_Payment, work_date, Adress, Cashier
 GO
 
 
@@ -205,12 +208,6 @@ CREATE VIEW Payments_Current_Month AS
 GO
 
 
--- Tabel pentru adaousuri
---		americano + lapte + sirop vanilie
-
-
--- Celiku momentan poate lucra in 2 spoturi in aceiasi zi
--- Tabel payments, check !
-
 
 SELECT * FROM Employers_Schedule
+ORDER BY work_date 
