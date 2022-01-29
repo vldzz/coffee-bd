@@ -4,6 +4,10 @@
 ![](Diagram.PNG)
 
 
+By
+* Alex
+* Stici Vlad
+* Gherasim Elena
 
 ### Contribuitors
 
