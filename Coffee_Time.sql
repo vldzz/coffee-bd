@@ -280,7 +280,7 @@ GO
 -----------------------------------------------------
 /* A view that shows all orders from current month */
 -----------------------------------------------------
-CREATE VIEW Orders_Current_Month AS
+CREATE VIEW Show_Orders_Current_Month AS
     SELECT * FROM Show_Orders
     WHERE MONTH(work_date) = MONTH(GETDATE())
 GO
@@ -289,7 +289,7 @@ GO
 --------------------------------------------------------------------
 /* A view that shows all employer's schedule, and additional info */
 --------------------------------------------------------------------
-CREATE VIEW Schedule AS
+CREATE VIEW Show_Schedule AS
     SELECT id_schedule, E.employer_name, S.adress, work_date, start_work_hour, end_work_hour
     FROM Employers_Schedule
     INNER JOIN Employers E ON E.id_Employer = Employers_Schedule.id_Employer
@@ -300,7 +300,7 @@ GO
 ------------------------------------
 /* A view that shows all payments */
 ------------------------------------
-CREATE VIEW Payment_History AS
+CREATE VIEW Show_Payment_History AS
     SELECT id_Payment, SUM(total_price) AS 'Paid',
            FORMAT(work_date, 'dd-MM-yyyy') AS 'payment_date',
            Adress, Cashier FROM Show_Orders
@@ -311,7 +311,7 @@ GO
 ----------------------------------------------
 /* A view that shows all payments for today */
 ----------------------------------------------
-CREATE VIEW Payments_For_Today AS
+CREATE VIEW Show_Payments_For_Today AS
     SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
     FROM Payment_History
     WHERE DAY(payment_date) = DAY(GETDATE())
@@ -321,9 +321,29 @@ GO
 ------------------------------------------------------
 /* A view that shows all payments for current month */
 ------------------------------------------------------
-CREATE VIEW Payments_Current_Month AS
+CREATE VIEW Show_Payments_Current_Month AS
     SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
     FROM Payment_History
     WHERE MONTH(payment_date) = MONTH(GETDATE())
 GO
+
+
+/*  Function that check if is weekday or not*/
+CREATE FUNCTION IS_Weekday (@date DATE)
+RETURNS BIT
+AS
+BEGIN
+    RETURN (SELECT IIF(FORMAT(@Date, 'ddd') LIKE 'S%', 1, 0))
+END
+GO
+
+
+-------------------------------------------------------
+/* A view that shown if workday is on weekend or not */
+-------------------------------------------------------
+CREATE VIEW Show_Weekdays AS
+SELECT Id_Schedule, Employer_Name, Adress, Work_Date, Start_Work_Hour, End_Work_Hour,
+       dbo.IS_Weekday(Work_Date)
+FROM Schedule
+
 
