@@ -1,6 +1,7 @@
 # Coffee Restaurant Database
 
 
+![](Diagram.PNG)
 
 
 
