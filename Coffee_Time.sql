@@ -146,6 +146,29 @@ GO
 ------------------------------------------------------[SELECT SECTION]----------------------------------------------------------
 
 
+----------------------------------------
+/* Function returns employer that works 
+at specific location is specific date */
+----------------------------------------
+CREATE FUNCTION Get_Employee_By_Schedule
+(
+    @id_subsidiary int,
+	@date_today date
+)
+RETURNS NVARCHAR(50)
+AS
+BEGIN
+    RETURN (
+		SELECT Employers.employer_name FROM Employers 
+		INNER JOIN Employers_Schedule ON Employers.id_employer = Employers_Schedule.id_employer
+		WHERE (id_subsidiary = @id_subsidiary AND Employers_Schedule.work_date = @date_today)
+	)
+END
+GO
+
+SELECT dbo.Get_Employee_By_Schedule(1, '29/01/2022') AS 'Employer'
+GO
+
 --------------------------------------------
 /* A view that shows all the orders done */
 -------------------------------------------
