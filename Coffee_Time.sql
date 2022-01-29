@@ -169,57 +169,66 @@ INSERT INTO Products(id_product, product_name, price, id_provider) VALUES
 
 INSERT INTO Payments(id_payment, payment_type, id_schedule) VALUES
 	(1, 'CARD', 1),
-	(2, 'CASH', 2),
-    (3, 'CARD', 2),
-    (4, 'CASH', 3),
-    (5, 'CARD', 4),
+	(2, 'CASH', 1),
+    (3, 'CARD', 1),
+    (4, 'CASH', 2),
+    (5, 'CARD', 2),
     (6, 'CASH', 2),
-    (7, 'CARD', 1),
-    (8, 'CARD', 2),
-    (9, 'CARD', 4),
-    (10, 'CASH', 2),
-    (11, 'CASH', 1),
-    (12, 'CASH', 5),
-    (13, 'CARD', 1),
-    (14, 'CARD', 5),
-    (15, 'CASH', 2),
-    (16, 'CASH', 1),
-    (17, 'CARD', 2),
-    (18, 'CASH', 1),
-    (19, 'CARD', 6),
-    (20, 'CASH', 7),
-    (21, 'CARD', 3),
-    (22, 'CASH', 4),
-    (23, 'CARD', 2),
-    (24, 'CASH', 1),
-    (25, 'CARD', 4);
+    (7, 'CARD', 2),
+    (8, 'CARD', 3),
+    (9, 'CARD', 3),
+    (10, 'CASH', 3),
+    (11, 'CASH', 4),
+    (12, 'CASH', 4),
+    (13, 'CARD', 4),
+    (14, 'CARD', 4),
+    (15, 'CASH', 4),
+    (16, 'CASH', 5),
+    (17, 'CARD', 5),
+    (18, 'CASH', 5),
+    (19, 'CARD', 5),
+    (20, 'CASH', 5),
+    (21, 'CARD', 5),
+    (22, 'CASH', 6),
+    (23, 'CARD', 6),
+    (24, 'CASH', 6),
+    (25, 'CARD', 6);
 
 INSERT INTO Orders(id_order, id_product, quantity, id_payment) VALUES
 	(1, 1, 1, 1),
 	(2, 2, 2, 2),
-	(3, 1, 5, 2),
+	(3, 1, 5, 3),
     (4, 2, 5, 3),
     (5, 3, 2, 3),
-    (6, 3, 2, 1),
-    (7, 1, 2, 3),
-    (8, 3, 1, 2),
-    (9, 1, 3, 2),
-    (10, 1, 6, 7),
-    (11, 5, 3, 2),
-    (12, 6, 1, 2),
-    (13, 7, 8, 4),
-    (14, 1, 4, 2),
-    (15, 3, 8, 2),
-    (16, 3, 7, 2),
-    (17, 5, 2, 6),
-    (18, 4, 2, 3),
-    (19, 1, 4, 2),
-    (20, 1, 3, 2),
-    (21, 5, 2, 6),
-    (22, 1, 5, 3),
-    (23, 1, 6, 3),
-    (24, 4, 2, 1),
-    (25, 5, 3, 6);
+    (6, 3, 2, 4),
+    (7, 1, 2, 4),
+    (8, 3, 1, 4),
+    (9, 1, 3, 5),
+    (10, 1, 6, 5),
+    (11, 5, 3, 6),
+    (12, 6, 1, 7),
+    (13, 7, 8, 8),
+    (14, 1, 4, 9),
+    (15, 3, 8, 10),
+    (16, 3, 7, 11),
+    (17, 5, 2, 12),
+    (18, 4, 2, 13),
+    (19, 1, 4, 13),
+    (20, 1, 3, 14),
+    (21, 5, 2, 14),
+    (22, 1, 5, 15),
+    (23, 1, 6, 16),
+    (24, 4, 2, 17),
+    (25, 5, 3, 18),
+    (26, 1, 4, 19),
+    (27, 1, 3, 20),
+    (28, 5, 2, 21),
+    (29, 1, 5, 21),
+    (30, 1, 6, 22),
+    (31, 4, 2, 23),
+    (32, 5, 3, 24),
+    (33, 4, 2, 25),
+    (34, 5, 3, 25);
 
 GO
 
@@ -227,7 +236,7 @@ GO
 
 
 ----------------------------------------
-/* Function returns employer that works 
+/* Function returns employer that works
 at specific location is specific date */
 
 /*
@@ -243,7 +252,7 @@ RETURNS NVARCHAR(50)
 AS
 BEGIN
     RETURN (
-		SELECT Employers.employer_name FROM Employers 
+		SELECT Employers.employer_name FROM Employers
 		INNER JOIN Employers_Schedule ON Employers.id_employer = Employers_Schedule.id_employer
 		WHERE (id_subsidiary = @id_subsidiary AND Employers_Schedule.work_date = @date_today)
 	)
@@ -290,7 +299,7 @@ GO
 ------------------------------------
 /* A view that shows all payments */
 ------------------------------------
-CREATE VIEW Payment_Statistics AS
+CREATE VIEW Payment_History AS
     SELECT id_Payment, SUM(total_price) AS 'Paid',
            FORMAT(work_date, 'dd-MM-yyyy') AS 'payment_date',
            Adress, Cashier FROM Show_Orders
@@ -303,7 +312,7 @@ GO
 ----------------------------------------------
 CREATE VIEW Payments_For_Today AS
     SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
-    FROM Payment_Statistics
+    FROM Payment_History
     WHERE DAY(payment_date) = DAY(GETDATE())
 GO
 
@@ -313,6 +322,6 @@ GO
 ------------------------------------------------------
 CREATE VIEW Payments_Current_Month AS
     SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
-    FROM Payment_Statistics
+    FROM Payment_History
     WHERE MONTH(payment_date) = MONTH(GETDATE())
 GO
