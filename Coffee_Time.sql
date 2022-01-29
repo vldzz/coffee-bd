@@ -325,3 +325,4 @@ CREATE VIEW Payments_Current_Month AS
     FROM Payment_History
     WHERE MONTH(payment_date) = MONTH(GETDATE())
 GO
+
