@@ -78,7 +78,8 @@ CREATE TABLE Products(
 CREATE TABLE Payments(
 	id_payment INT PRIMARY KEY,
 	payment_type NVARCHAR(4) CHECK(payment_type='CASH' OR payment_type='CARD') NOT NULL,
-    id_schedule INT FOREIGN KEY REFERENCES Employers_Schedule(id_Schedule)
+	payment_date DATETIME NOT NULL,
+    id_subsidiary INT FOREIGN KEY REFERENCES Subsidiaries(id_Subsidiary)
 )
 
 CREATE TABLE Orders(
@@ -167,32 +168,32 @@ INSERT INTO Products(id_product, product_name, price, id_provider) VALUES
     (14, 'cafea verde', 16, 2),
     (15, 'ceai rosu', 17, 8);
 
-INSERT INTO Payments(id_payment, payment_type, id_schedule) VALUES
-	(1, 'CARD', 1),
-	(2, 'CASH', 1),
-    (3, 'CARD', 1),
-    (4, 'CASH', 2),
-    (5, 'CARD', 2),
-    (6, 'CASH', 2),
-    (7, 'CARD', 2),
-    (8, 'CARD', 3),
-    (9, 'CARD', 3),
-    (10, 'CASH', 3),
-    (11, 'CASH', 4),
-    (12, 'CASH', 4),
-    (13, 'CARD', 4),
-    (14, 'CARD', 4),
-    (15, 'CASH', 4),
-    (16, 'CASH', 5),
-    (17, 'CARD', 5),
-    (18, 'CASH', 5),
-    (19, 'CARD', 5),
-    (20, 'CASH', 5),
-    (21, 'CARD', 5),
-    (22, 'CASH', 6),
-    (23, 'CARD', 6),
-    (24, 'CASH', 6),
-    (25, 'CARD', 6);
+INSERT INTO Payments(id_payment, payment_type, payment_date, id_subsidiary) VALUES
+	(1, 'CARD', '27/01/2022 8:00', 1),
+	(2, 'CASH', '27/01/2022 8:00', 1),
+    (3, 'CARD', '27/01/2022 8:00', 1),
+    (4, 'CASH', '27/01/2022 8:00', 1),
+    (5, 'CARD', '27/01/2022 8:00', 1),
+    (6, 'CASH', '27/01/2022 8:00', 1),
+    (7, 'CARD', '27/01/2022 8:00', 1),
+    (8, 'CARD', '27/01/2022 8:00', 1),
+    (9, 'CARD', '27/01/2022 8:00', 1),
+    (10, 'CASH', '27/01/2022 8:00', 1),
+    (11, 'CASH', '27/01/2022 8:00', 1),
+    (12, 'CASH', '27/01/2022 8:00', 1),
+    (13, 'CARD', '27/01/2022 8:00', 1),
+    (14, 'CARD', '27/01/2022 8:00', 1),
+    (15, 'CASH', '27/01/2022 8:00', 1),
+    (16, 'CASH', '27/01/2022 8:00', 1),
+    (17, 'CARD', '27/01/2022 8:00', 1),
+    (18, 'CASH', '27/01/2022 8:00', 1),
+    (19, 'CARD', '27/01/2022 8:00', 1),
+    (20, 'CASH', '27/01/2022 8:00', 1),
+    (21, 'CARD', '27/01/2022 8:00', 1),
+    (22, 'CASH', '27/01/2022 8:00', 1),
+    (23, 'CARD', '27/01/2022 8:00', 1),
+    (24, 'CASH', '27/01/2022 8:00', 1),
+    (25, 'CARD', '27/01/2022 8:00', 1);
 
 INSERT INTO Orders(id_order, id_product, quantity, id_payment) VALUES
 	(1, 1, 1, 1),
@@ -270,7 +271,7 @@ CREATE VIEW Show_Orders AS
     FROM orders
     INNER JOIN Payments ON Orders.id_payment = Payments.id_payment
     INNER JOIN Products ON Orders.id_product = Products.id_product
-    INNER JOIN Employers_Schedule Schedule ON Payments.id_Schedule = Schedule.id_Schedule
+    INNER JOIN Employers_Schedule Schedule ON Payments.id_subsidiary = Schedule.id_Schedule
     INNER JOIN Employers ON Employers.id_employer = Schedule.id_Employer
     INNER JOIN Subsidiaries ON Schedule.id_Subsidiary = Subsidiaries.id_Subsidiary
 GO
