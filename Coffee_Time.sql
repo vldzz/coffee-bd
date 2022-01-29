@@ -95,8 +95,8 @@ GO
 
 INSERT INTO Subsidiaries VALUES
 	(1, 'Centru', 'str.Stefan cel Mare 47'),
-	(2, 'Ciocana', 'str.Mircea cel Batran');
-
+	(2, 'Ciocana', 'str.Mircea cel Batran'),
+	(3, 'Botanica', 'str.Cuza Voda 128')
 
 INSERT INTO Employers (id_employer, employer_name, sallary) VALUES
 	(1, 'Bolsoi Valentina', 4800),
