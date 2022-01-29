@@ -327,8 +327,9 @@ CREATE VIEW Show_Payments_Current_Month AS
     WHERE MONTH(payment_date) = MONTH(GETDATE())
 GO
 
-
+----------------------------------------------
 /*  Function that check if is weekday or not*/
+----------------------------------------------
 CREATE FUNCTION IS_Weekday (@date DATE)
 RETURNS BIT
 AS
