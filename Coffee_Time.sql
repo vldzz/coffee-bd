@@ -14,6 +14,21 @@ USE Coffee_Time
 GO
 
 
+----------------------------------------------
+/* Configures advanced options for cmdshell */
+----------------------------------------------
+EXEC master.dbo.sp_configure 'show advanced options', 1
+RECONFIGURE WITH OVERRIDE
+GO
+
+
+------------------------------------------------
+/* Allows using command shell from sql server */
+------------------------------------------------
+EXEC master.dbo.sp_configure 'xp_cmdshell', 1
+RECONFIGURE WITH OVERRIDE
+GO
+
 -------------------------------------------
 /* Gives all the rights to current user */
 ------------------------------------------
@@ -313,7 +328,7 @@ GO
 ----------------------------------------------
 CREATE VIEW Show_Payments_For_Today AS
     SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
-    FROM Payment_History
+    FROM Show_Payment_History
     WHERE DAY(payment_date) = DAY(GETDATE())
 GO
 
@@ -323,7 +338,7 @@ GO
 ------------------------------------------------------
 CREATE VIEW Show_Payments_Current_Month AS
     SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
-    FROM Payment_History
+    FROM Show_Payment_History
     WHERE MONTH(payment_date) = MONTH(GETDATE())
 GO
 
@@ -344,7 +359,27 @@ GO
 -------------------------------------------------------
 CREATE VIEW Show_Weekdays AS
 SELECT Id_Schedule, Employer_Name, Adress, Work_Date, Start_Work_Hour, End_Work_Hour,
-       dbo.IS_Weekday(Work_Date)
-FROM Schedule
+       dbo.IS_Weekday(Work_Date) AS 'is_Weekend'
+FROM Show_Schedule
+GO
 
 
+-------------------------------------------------------
+/* Create a folder Backups, used table to hide output */
+-------------------------------------------------------
+DECLARE @tmpNewValue TABLE (newvalue nvarchar(max))
+INSERT INTO @tmpNewValue 
+EXEC xp_cmdshell 'MD D:\Backups'
+GO
+
+
+------------------------------
+/* Back-up for current file */
+------------------------------
+BACKUP DATABASE Coffee_Time
+	FILE = 'Coffee_Time' 
+	TO DISK = 'D:\Backups\Coffee_Time.bak'   
+	WITH FORMAT, 
+	STATS = 10,
+	DESCRIPTION = 'Full backup for Coffee_Time database'
+GO
