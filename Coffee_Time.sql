@@ -383,3 +383,16 @@ BACKUP DATABASE Coffee_Time
 	STATS = 10,
 	DESCRIPTION = 'Full backup for Coffee_Time database'
 GO
+
+
+BULK INSERT Employers
+FROM 'C:\Users\asus\Desktop\coffee-bd\inserts\insertEmployers.csv'
+WITH (FIRSTROW = 3,
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR='\n',
+    BATCHSIZE=250000,
+    MAXERRORS=2);
+GO 
+
+
+SELECT * FROM Employers
