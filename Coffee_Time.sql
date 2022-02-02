@@ -390,14 +390,14 @@ GO
 ---------------------------------------
 CREATE PROCEDURE Insert_Using_Bulk (
 	@user NVARCHAR(30),
-	@fileName NVARCHAR(30),
-	@tableName NVARCHAR(30)
+	@tableName NVARCHAR(30),
+	@fileName NVARCHAR(30)
 )
 AS
-	DECLARE @filePath AS VARCHAR(100) = CONCAT('C:\Users\', @user, '\Desktop\coffee-bd\inserts\insertEmployers.csv')
+	DECLARE @filePath AS VARCHAR(100) = CONCAT('C:\Users\', @user, '\Desktop\coffee-bd\inserts\', @fileName)
 	DECLARE @SQL_BULK VARCHAR(MAX)
 	SET @SQL_BULK = ('
-		BULK INSERT Employers
+		BULK INSERT ' + @tableName + ' 
 		FROM''' + @filePath + '''
 		WITH (FIRSTROW = 1,
 			FIELDTERMINATOR = '','',
@@ -405,10 +405,11 @@ AS
 			BATCHSIZE = 100000,
 			MAXERRORS = 2)'
 			);
+	PRINT @SQL_BULK
 	EXEC (@SQL_BULK)
 GO
 
-EXEC Insert_Using_Bulk 'asus', 'me', 'you'
+EXEC Insert_Using_Bulk 'asus', 'Employers', 'insertEmployers.csv'
 
 
 --BULK INSERT Employers
