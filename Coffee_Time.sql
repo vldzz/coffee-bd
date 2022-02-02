@@ -387,12 +387,15 @@ GO
 
 BULK INSERT Employers
 FROM 'C:\Users\asus\Desktop\coffee-bd\inserts\insertEmployers.csv'
-WITH (FIRSTROW = 3,
+WITH (FIRSTROW = 2,
     FIELDTERMINATOR = ',',
     ROWTERMINATOR='\n',
     BATCHSIZE=250000,
-    MAXERRORS=2);
+    MAXERRORS=0);
 GO 
 
 
 SELECT * FROM Employers
+
+
+
