@@ -385,14 +385,40 @@ BACKUP DATABASE Coffee_Time
 GO
 
 
-BULK INSERT Employers
-FROM 'C:\Users\asus\Desktop\coffee-bd\inserts\insertEmployers.csv'
-WITH (FIRSTROW = 2,
-    FIELDTERMINATOR = ',',
-    ROWTERMINATOR='\n',
-    BATCHSIZE=250000,
-    MAXERRORS=0);
-GO 
+---------------------------------------
+/* Inserts in table using a csv file */
+---------------------------------------
+CREATE PROCEDURE Insert_Using_Bulk (
+	@user NVARCHAR(30),
+	@fileName NVARCHAR(30),
+	@tableName NVARCHAR(30)
+)
+AS
+	DECLARE @filePath AS VARCHAR(100) = CONCAT('C:\Users\', @user, '\Desktop\coffee-bd\inserts\insertEmployers.csv')
+	DECLARE @SQL_BULK VARCHAR(MAX)
+	SET @SQL_BULK = ('
+		BULK INSERT Employers
+		FROM''' + @filePath + '''
+		WITH (FIRSTROW = 1,
+			FIELDTERMINATOR = '','',
+			ROWTERMINATOR = ''\n'',
+			BATCHSIZE = 100000,
+			MAXERRORS = 2)'
+			);
+	EXEC (@SQL_BULK)
+GO
+
+EXEC Insert_Using_Bulk 'asus', 'me', 'you'
+
+
+--BULK INSERT Employers
+--FROM @filePath
+--WITH (FIRSTROW = 1,
+--    FIELDTERMINATOR = ',',
+--    ROWTERMINATOR = '\n',
+--    BATCHSIZE = 100000,
+--    MAXERRORS = 2);
+--GO 
 
 
 SELECT * FROM Employers
