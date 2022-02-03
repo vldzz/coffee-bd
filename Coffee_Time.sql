@@ -362,17 +362,6 @@ BACKUP DATABASE Coffee_Time
 GO
 
 
---BULK INSERT Employers
---FROM @filePath
---WITH (FIRSTROW = 1,
---    FIELDTERMINATOR = ',',
---    ROWTERMINATOR = '\n',
---    BATCHSIZE = 100000,
---    MAXERRORS = 2);
---GO 
-
-
-SELECT * FROM Employers
 
 
 
