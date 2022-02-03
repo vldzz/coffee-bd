@@ -260,6 +260,7 @@ BEGIN
 END
 GO
 
+
 --------------------------------------------
 /* A view that shows all the orders done */
 -------------------------------------------
@@ -313,7 +314,7 @@ GO
 ----------------------------------------------
 CREATE VIEW Show_Payments_For_Today AS
     SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
-    FROM Payment_History
+    FROM Show_Payment_History
     WHERE DAY(payment_date) = DAY(GETDATE())
 GO
 
@@ -323,7 +324,7 @@ GO
 ------------------------------------------------------
 CREATE VIEW Show_Payments_Current_Month AS
     SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
-    FROM Payment_History
+    FROM Show_Payment_History
     WHERE MONTH(payment_date) = MONTH(GETDATE())
 GO
 
@@ -344,7 +345,23 @@ GO
 -------------------------------------------------------
 CREATE VIEW Show_Weekdays AS
 SELECT Id_Schedule, Employer_Name, Adress, Work_Date, Start_Work_Hour, End_Work_Hour,
-       dbo.IS_Weekday(Work_Date)
-FROM Schedule
+       dbo.IS_Weekday(Work_Date) AS 'is_Weekend'
+FROM Show_Schedule
+GO
+
+
+------------------------------
+/* Back-up for current file */
+------------------------------
+BACKUP DATABASE Coffee_Time
+	FILE = 'Coffee_Time' 
+	TO DISK = 'Coffee_Time.bak'   
+	WITH FORMAT, 
+	STATS = 10,
+	DESCRIPTION = 'Full backup for Coffee_Time database'
+GO
+
+
+
 
 
