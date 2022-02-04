@@ -328,6 +328,7 @@ CREATE VIEW Show_Payments_Current_Month AS
     WHERE MONTH(payment_date) = MONTH(GETDATE())
 GO
 
+
 ----------------------------------------------
 /*  Function that check if is weekday or not*/
 ----------------------------------------------
@@ -350,9 +351,9 @@ FROM Show_Schedule
 GO
 
 
-------------------------------
-/* Back-up for current file */
-------------------------------
+--------------------------------------------------------
+/* Back-up for current database at Sql Server location*/
+--------------------------------------------------------
 BACKUP DATABASE Coffee_Time
 	FILE = 'Coffee_Time' 
 	TO DISK = 'Coffee_Time.bak'   
