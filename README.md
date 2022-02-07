@@ -8,6 +8,7 @@ By
 * Alex
 * Stici Vlad
 * Gherasim Elena
+* Ulian Draguta
 
 ### Contribuitors
 
