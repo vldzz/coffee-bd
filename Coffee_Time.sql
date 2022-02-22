@@ -105,7 +105,6 @@ INSERT INTO Employers (id_employer, employer_name, sallary) VALUES
 	(3, 'Frunza Sanda', 5000),
 	(4, 'Zgardan Razvan', 8000);
 
-
 INSERT INTO Employers_Schedule (id_schedule, id_employer, id_subsidiary,
 									work_date, start_work_hour, end_work_hour) VALUES
     (1, 1, 1, '27/01/2022', 08, 14),
@@ -363,6 +362,32 @@ BACKUP DATABASE Coffee_Time
 GO
 
 
+-------------------------------------------------------------
+/*	Procedure that get payments for current day/month/year */
+-------------------------------------------------------------
+CREATE PROCEDURE Get_Payments_Current 
+	@data_type nvarchar(10) 
+AS
+	RETURN 
+	CASE 
+		WHEN UPPER(@data_type) = 'DAY' THEN (
+											SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
+											FROM Show_Payment_History
+											WHERE DAY(payment_date) = DAY(GETDATE()))
+
+		WHEN UPPER(@data_type) = 'MONTH' THEN (
+											SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
+											FROM Show_Payment_History
+											WHERE MONTH(payment_date) = MONTH(GETDATE()))
+
+		WHEN UPPER(@data_type) = 'YEAR' THEN (
+											SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
+											FROM Show_Payment_History
+											WHERE YEAR(payment_date) = YEAR(GETDATE()))
+		
+		-- RAISERROR(15600, -1, -1, 'TEst')
+	END 
+GO
 
 
 
