@@ -1,7 +1,12 @@
-CREATE PROCEDURE Add_Order(@Id_Payment INT, @Payment_Type NVARCHAR(4), @Subsidiary_Name NVARCHAR(50),
-                           @Product_Name NVARCHAR(40), @Quantity INT) AS
+CREATE PROCEDURE Add_Order (
+        @Id_Payment INT, 
+        @Payment_Type NVARCHAR(4), 
+        @Subsidiary_Name NVARCHAR(50),
+        @Product_Name NVARCHAR(40), 
+        @Quantity INT
+        ) 
+AS
 BEGIN
-    --init transaction
     BEGIN TRANSACTION
 
         --find subsidiary id and check if exists
@@ -35,12 +40,9 @@ BEGIN
         INSERT INTO Orders(Id_Order, Id_Product, Quantity, Id_Payment)
         Values (@Last_Order_Id, @Id_Product, @Quantity, @Id_Payment);
 
-    --commit transaction
     COMMIT TRANSACTION
 END
 GO
 
 
-
---Test
 EXEC Add_Order 26, 'CASH', 'Botanica', 'cappucino', 1
