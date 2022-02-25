@@ -38,7 +38,7 @@ BEGIN
         SET @Last_Order_Id = (SELECT MAX(Id_Order) FROM Orders) + 1
 
         INSERT INTO Orders(Id_Order, Id_Product, Quantity, Id_Payment)
-        Values (@Last_Order_Id, @Id_Product, @Quantity, @Id_Payment);
+        VALUES (@Last_Order_Id, @Id_Product, @Quantity, @Id_Payment);
 
     COMMIT TRANSACTION
 END
