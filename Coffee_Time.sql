@@ -26,6 +26,7 @@ GO
 /* Set data format to day/month/year */
 ---------------------------------------
 SET DATEFORMAT DMY
+GO
 
 
 -------------------------------------------
@@ -35,18 +36,25 @@ SET NOCOUNT ON;
 GO
 
 
+------------------------------------
+/* To not dublicate same datatype */
+------------------------------------
+CREATE TYPE NotNullString 
+FROM NVARCHAR(50) NOT NULL; 
+GO
+
 -----------------------------------------------------[TABLES SECTION]----------------------------------------------------------
 
 
 CREATE TABLE Subsidiaries(
 	id_subsidiary INT PRIMARY KEY,
-	subsidiary_name NVARCHAR(50) UNIQUE NOT NULL,
+	subsidiary_name NotNullString UNIQUE,
 	adress NVARCHAR(50)
 )
 
 CREATE TABLE Employers(
 	id_employer INT PRIMARY KEY,
-	employer_name NVARCHAR(50) NOT NULL,
+	employer_name NotNullString,
 	sallary FLOAT NOT NULL,
 	CHECK (sallary >= 0)
 )
@@ -63,13 +71,13 @@ CREATE TABLE Employers_Schedule (
 
 CREATE TABLE Providers(
 	id_provider INT PRIMARY KEY,
-	provider_name NVARCHAR(50) NOT NULL,
+	provider_name NotNullString,
 	adress NVARCHAR(25)
 )
 
 CREATE TABLE Products(
 	id_product INT PRIMARY KEY,
-	product_name NVARCHAR(40) UNIQUE NOT NULL,
+	product_name NotNullString UNIQUE,
 	price FLOAT NOT NULL,
 	id_provider INT FOREIGN KEY REFERENCES Providers(id_provider),
 	CHECK (price >= 0 AND price <= 100)
@@ -362,32 +370,47 @@ BACKUP DATABASE Coffee_Time
 GO
 
 
+--------------------------------------
+/* Synonim for employers start hour */
+--------------------------------------
+CREATE SYNONYM start_hour
+FOR Employers_Schedule.start_work_hour
+GO 
+
+
+--------------------------------------
+/* Created alternative for view name */
+---------------------------------------
+CREATE SYNONYM Payments_History
+FOR Coffee_Time.Show_Payments_History
+GO
+
+
 -------------------------------------------------------------
 /*	Procedure that get payments for current day/month/year */
 -------------------------------------------------------------
-CREATE PROCEDURE Get_Payments_Current 
-	@data_type nvarchar(10) 
-AS
-	RETURN 
-	CASE 
-		WHEN UPPER(@data_type) = 'DAY' THEN (
-											SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
-											FROM Show_Payment_History
-											WHERE DAY(payment_date) = DAY(GETDATE()))
+--CREATE PROCEDURE Get_Payments_Current 
+--	@data_type nvarchar(10) 
+--AS
+--	RETURN 
+--	CASE 
+--		WHEN UPPER(@data_type) = 'DAY' THEN (
+--											SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
+--											FROM Show_Payment_History
+--											WHERE DAY(payment_date) = DAY(GETDATE()))
 
-		WHEN UPPER(@data_type) = 'MONTH' THEN (
-											SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
-											FROM Show_Payment_History
-											WHERE MONTH(payment_date) = MONTH(GETDATE()))
+--		WHEN UPPER(@data_type) = 'MONTH' THEN (
+--											SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
+--											FROM Show_Payment_History
+--											WHERE MONTH(payment_date) = MONTH(GETDATE()))
 
-		WHEN UPPER(@data_type) = 'YEAR' THEN (
-											SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
-											FROM Show_Payment_History
-											WHERE YEAR(payment_date) = YEAR(GETDATE()))
+--		WHEN UPPER(@data_type) = 'YEAR' THEN (
+--											SELECT id_Payment, Paid, Payment_Date, Adress, Cashier
+--											FROM Show_Payment_History
+--											WHERE YEAR(payment_date) = YEAR(GETDATE()))
 		
-		-- RAISERROR(15600, -1, -1, 'TEst')
-	END 
-GO
-
+--		-- RAISERROR(15600, -1, -1, 'TEst')
+--	END 
+--GO
 
 
